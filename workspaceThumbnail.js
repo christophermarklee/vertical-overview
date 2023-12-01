@@ -190,9 +190,16 @@ var ThumbnailsBoxOverride = {
             this._dropPlaceholder.allocate_preferred_size(
                 ...this._dropPlaceholder.get_position());
 
-            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-                this._dropPlaceholder.hide();
-            });
+            if (Meta.later_add) {
+                Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+                    this._dropPlaceholder.show();
+                });
+            } else {
+                const laters = global.compositor.get_laters();
+                laters.add(Meta.LaterType.BEFORE_REDRAW, () => {
+                    this._dropPlaceholder.show();
+                });
+            }
         }
 
         let thumbnails_position = (global.vertical_overview.settings.object.get_int('thumbnails-position') || 1);
